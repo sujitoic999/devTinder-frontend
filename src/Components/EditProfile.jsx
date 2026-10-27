@@ -18,20 +18,56 @@ const EditProfile = ({ user }) => {
   const dispatch = useDispatch();
 
   const saveProfile = async () => {
-    //clearing the errors
     setError('');
+
+    const updates = {};
+    const currentValues = {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      photourl: user.photourl,
+      age: user.age,
+      gender: user.gender,
+      about: user.about,
+    };
+    const editedValues = {
+      firstName,
+      lastName,
+      photourl,
+      age,
+      gender,
+      about,
+    };
+
+    Object.entries(editedValues).forEach(([field, value]) => {
+      if (String(value ?? '') !== String(currentValues[field] ?? '')) {
+        updates[field] = value;
+      }
+    });
+
+    const originalSkills = Array.isArray(user.skills) ? user.skills : [];
+    const updatedSkills = skills
+      .map((skill) => skill.trim())
+      .filter(Boolean);
+    const normalizedOriginalSkills = originalSkills
+      .map((skill) => skill.trim())
+      .filter(Boolean);
+
+    if (
+      JSON.stringify(updatedSkills) !==
+      JSON.stringify(normalizedOriginalSkills)
+    ) {
+      updates.skills = updatedSkills;
+    }
+
+    if (Object.keys(updates).length === 0) {
+      setError('No changes to save.');
+      return;
+    }
+
     try {
-      const res = await axios.post(
+      const res = await axios.patch(
         BASE_URL + '/profile/edit',
-        {
-          firstName,
-          lastName,
-          photourl,
-          age,
-          gender,
-          about,
-          skills,
-        },
+        updates,
         {
           withCredentials: true,
         },
@@ -42,7 +78,12 @@ const EditProfile = ({ user }) => {
         setShowToast(false);
       }, 3000);
     } catch (error) {
-      setError(error.response.data);
+      const responseData = error.response?.data;
+      const errorMessage =
+        typeof responseData === 'string'
+          ? responseData
+          : responseData?.message || error.message;
+      setError(errorMessage || 'Unable to save profile.');
     }
   };
 
@@ -132,7 +173,7 @@ const EditProfile = ({ user }) => {
                   </div>
                   <input
                     type="text"
-                    value={skills}
+                    value={skills.join(', ')}
                     onChange={(e) => setSkills(e.target.value.split(','))}
                     className="input input-bordered w-full max-w-xs"
                   />
