@@ -5,33 +5,39 @@ import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../utils/userSlice";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 const Body = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((store) => store.user);
-
-  const fetchUser = async () => {
-    try {
-      const user = await axios.get(BASE_URL + "/profile/view", {
-        withCredentials: true,
-      });
-      // console.log(user.data);
-      dispatch(addUser(user.data));
-    } catch (err) {
-      if (err.status == 401) {
-        navigate("/login");
-      }
-      console.log(err);
-    }
-  };
+  const userRef = useRef(user);
+  userRef.current = user;
 
   useEffect(() => {
-    if (!user) {
-      fetchUser();
-    }
-  }, []);
+    if (user) return;
+
+    const controller = new AbortController();
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(BASE_URL + "/profile/view", {
+          withCredentials: true,
+          signal: controller.signal,
+        });
+        dispatch(addUser(response.data));
+      } catch (err) {
+        if (controller.signal.aborted) return;
+
+        if (err.response?.status === 401 && !userRef.current) {
+          navigate("/login");
+        }
+        console.log(err);
+      }
+    };
+
+    fetchUser();
+    return () => controller.abort();
+  }, [dispatch, navigate, user]);
   return (
     <div>
       <Navbar />
