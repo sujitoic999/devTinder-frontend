@@ -1,32 +1,32 @@
-import React, { useState } from "react";
-import UserCard from "./UserCard";
-import axios from "axios";
-import { BASE_URL } from "../utils/constants";
-import { useDispatch } from "react-redux";
-import { addUser } from "../utils/userSlice";
+import React, { useState } from 'react';
+import UserCard from './UserCard';
+import axios from 'axios';
+import { BASE_URL } from '../utils/constants';
+import { useDispatch } from 'react-redux';
+import { addUser } from '../utils/userSlice';
 
 const EditProfile = ({ user }) => {
   const [firstName, setFirstname] = useState(user.firstName);
   const [lastName, setLastName] = useState(user.lastName);
-  const [photoURL, setPhotoURL] = useState(user.photoURL);
-  const [age, setAge] = useState(user.age || "");
+  const [photourl, setphotourl] = useState(user.photourl);
+  const [age, setAge] = useState(user.age || '');
   const [gender, setGender] = useState(user.gender);
   const [about, setAbout] = useState(user.about);
   const [skills, setSkills] = useState(user.skills || []);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [showToast, setShowToast] = useState(false);
   const dispatch = useDispatch();
 
   const saveProfile = async () => {
     //clearing the errors
-    setError("");
+    setError('');
     try {
       const res = await axios.post(
-        BASE_URL + "/profile/edit",
+        BASE_URL + '/profile/edit',
         {
           firstName,
           lastName,
-          photoURL,
+          photourl,
           age,
           gender,
           about,
@@ -34,7 +34,7 @@ const EditProfile = ({ user }) => {
         },
         {
           withCredentials: true,
-        }
+        },
       );
       dispatch(addUser(res.data.data));
       setShowToast(true);
@@ -89,12 +89,12 @@ const EditProfile = ({ user }) => {
                 </label>
                 <label className="form-control w-full max-w-xs my-2">
                   <div className="label">
-                    <span className="label-text">PhotoURL</span>
+                    <span className="label-text">photourl</span>
                   </div>
                   <input
                     type="text"
-                    value={photoURL}
-                    onChange={(e) => setPhotoURL(e.target.value)}
+                    value={photourl}
+                    onChange={(e) => setphotourl(e.target.value)}
                     className="input input-bordered w-full max-w-xs"
                   />
                 </label>
@@ -104,22 +104,22 @@ const EditProfile = ({ user }) => {
                   </div>
                   <div className="dropdown">
                     <div tabIndex={0} role="button" className="btn m-1">
-                      {gender || "Select gender"}
+                      {gender || 'Select gender'}
                     </div>
                     <ul
                       tabIndex={0}
                       className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
                     >
                       <li>
-                        <button onClick={() => setGender("Male")}>Male</button>
+                        <button onClick={() => setGender('Male')}>Male</button>
                       </li>
                       <li>
-                        <button onClick={() => setGender("Female")}>
+                        <button onClick={() => setGender('Female')}>
                           Female
                         </button>
                       </li>
                       <li>
-                        <button onClick={() => setGender("Others")}>
+                        <button onClick={() => setGender('Others')}>
                           Others
                         </button>
                       </li>
@@ -133,7 +133,7 @@ const EditProfile = ({ user }) => {
                   <input
                     type="text"
                     value={skills}
-                    onChange={(e) => setSkills(e.target.value.split(","))}
+                    onChange={(e) => setSkills(e.target.value.split(','))}
                     className="input input-bordered w-full max-w-xs"
                   />
                 </label>
@@ -161,7 +161,7 @@ const EditProfile = ({ user }) => {
           </div>
         </div>
         <UserCard
-          user={{ firstName, lastName, photoURL, about, age, gender , skills }}
+          user={{ firstName, lastName, photourl, about, age, gender, skills }}
         />
       </div>
       {showToast && (

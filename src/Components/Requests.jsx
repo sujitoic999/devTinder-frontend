@@ -1,8 +1,8 @@
-import axios from "axios";
-import React, { useState } from "react";
-import { BASE_URL } from "../utils/constants";
-import { useDispatch, useSelector } from "react-redux";
-import { addRequests, removeRequest } from "../utils/requestSlice";
+import axios from 'axios';
+import React, { useState } from 'react';
+import { BASE_URL } from '../utils/constants';
+import { useDispatch, useSelector } from 'react-redux';
+import { addRequests, removeRequest } from '../utils/requestSlice';
 
 const Requests = () => {
   const dispatch = useDispatch();
@@ -12,9 +12,9 @@ const Requests = () => {
   const reviewRequest = async (status, _id) => {
     try {
       const res = await axios.post(
-        BASE_URL + "/request/review" + "/" + status + "/" + _id,
+        BASE_URL + '/request/review' + '/' + status + '/' + _id,
         {},
-        { withCredentials: true }
+        { withCredentials: true },
       );
       dispatch(removeRequest(_id));
     } catch (error) {
@@ -24,7 +24,7 @@ const Requests = () => {
 
   const fetchRequests = async () => {
     try {
-      const requests = await axios.get(BASE_URL + "/user/requests/recieved", {
+      const requests = await axios.get(BASE_URL + '/user/requests/recieved', {
         withCredentials: true,
       });
       dispatch(addRequests(requests.data.connectionRequests));
@@ -53,7 +53,7 @@ const Requests = () => {
         Requests ({requests.length})
       </h1>
       {requests.map((request) => {
-        const { _id, firstName, lastName, photoURL, age, gender, about } =
+        const { _id, firstName, lastName, photourl, age, gender, about } =
           request.fromUserId;
 
         return (
@@ -65,26 +65,26 @@ const Requests = () => {
               <img
                 alt="photo"
                 className="w-14 h-14 rounded-full object-contain"
-                src={photoURL}
+                src={photourl}
               />
             </div>
             <div className="text-left m-4 p-4 ">
               <h2 className="font-bold text-xl">
-                {firstName + " " + lastName}
+                {firstName + ' ' + lastName}
               </h2>
-              {age && gender && <p>{age + " " + gender}</p>}
+              {age && gender && <p>{age + ' ' + gender}</p>}
               <p>{about}</p>
             </div>
             <div className="">
               <button
                 className="btn btn-secondary mx-2"
-                onClick={() => reviewRequest("accepted", request._id)}
+                onClick={() => reviewRequest('accepted', request._id)}
               >
                 Accept
               </button>
               <button
                 className="btn btn-primary mx-2"
-                onClick={() => reviewRequest("rejected", request._id)}
+                onClick={() => reviewRequest('rejected', request._id)}
               >
                 Reject
               </button>
